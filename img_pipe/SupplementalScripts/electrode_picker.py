@@ -202,17 +202,23 @@ class electrode_picker:
 
         # Resample both images to the highest resolution
         voxsz = (256, 256, 256)
+        print(np.min(ct_data), np.max(ct_data))
         if ct_data.shape != voxsz:
-            print("Resizing voxels in CT")
+            print(ct_data.shape, "Resizing voxels in CT")
             ct_data = scipy.ndimage.zoom(ct_data, [voxsz[0]/cx, voxsz[1]/cy, voxsz[2]/cz])
             print(ct_data.shape)
         if self.img.shape != voxsz:
             print("Resizing voxels in MRI")
             img_data = scipy.ndimage.zoom(img_data, [voxsz[0]/nx, voxsz[1]/ny, voxsz[2]/nz])
             print(img_data.shape)
-        
+
+        print(np.min(ct_data), np.max(ct_data))
         # Threshold the CT so only bright objects (electrodes) are visible
-        ct_data[ct_data < 1000] = np.nan
+        # where_are_NaNs = np.isnan(ct_data)
+        # # print(where_are_NaNs)
+        # ct_data[where_are_NaNs] = 0
+        # ct_data[np.where(ct_data < 1000)[0]] = 0
+        # ct_data[ct_data == 0] = np.nan
 
         self.ct_data = ct_data
         self.img_data = img_data
@@ -263,7 +269,7 @@ class electrode_picker:
         # Plot sagittal, coronal, and axial views 
         for i in np.arange(3):
             self.ax.append(self.fig.add_subplot(2,2,i+1))
-            self.ax[i].set_axis_bgcolor('k')
+            self.ax[i].set_facecolor('k')
             if i==0:
                 imdata = img_data[cs[0],:,:].T
                 ctdat  = ct_data[cs[0],:,:].T
@@ -313,7 +319,7 @@ class electrode_picker:
         # Plot the maximum intensity projection
         self.ct_slice = 's' # Show sagittal MIP to start
         self.ax.append(self.fig.add_subplot(2,2,4))
-        self.ax[3].set_axis_bgcolor('k')
+        self.ax[3].set_facecolor('k')
         self.im.append(plt.imshow(np.nanmax(ct_data[cs[0]-15:cs[0]+15,:,:], axis=0).T, cmap=cm.gray, aspect='auto'))
         self.cursor.append(plt.plot([cs[1], cs[1]], [self.ax[3].get_ylim()[0]+1, self.ax[3].get_ylim()[1]-1], color=[0, 1, 0] ))
         self.cursor2.append(plt.plot([self.ax[3].get_xlim()[0]+1, self.ax[3].get_xlim()[1]-1], [cs[2], cs[2]], color=[0, 1, 0] ))
@@ -341,8 +347,16 @@ class electrode_picker:
         ct_slider_ax = plt.axes([self.ax[1].get_position().bounds[0]+0.06, 
                       self.ax[1].get_position().bounds[1]+0.42, 
                       self.ax[1].get_position().bounds[2]-0.1, 0.02])
-        print(np.nanmax(ct_data))
-        self.ct_slider = Slider(ct_slider_ax, 'CT max', 1000, np.nanmax(ct_data), facecolor=[0.8, 0.1, 0.1])
+        print(np.nanmin(ct_data), np.nanmax(ct_data), np.min(ct_data), np.max(ct_data))
+
+        print(ct_data.shape, np.min(ct_data))
+        # reset max to not nan
+        if np.isnan(np.nanmax(ct_data)):
+            maxsliderval = 2000
+        else:
+            maxsliderval = np.nanmax(ct_data)
+
+        self.ct_slider = Slider(ct_slider_ax, 'CT max', 1000, maxsliderval, facecolor=[0.8, 0.1, 0.1])
         self.ct_slider.on_changed(self.update_ct)
 
         plt.show()
