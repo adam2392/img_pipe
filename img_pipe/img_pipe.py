@@ -42,7 +42,7 @@ import nipy.algorithms
 import nipy.algorithms.resample
 import nipy.algorithms.registration.histogram_registration
 
-from img_pipe_chang.img_pipe.plotting.mlab_3D_to_2D import get_world_to_view_matrix, get_view_to_display_matrix, \
+from img_pipe.img_pipe.plotting.mlab_3D_to_2D import get_world_to_view_matrix, get_view_to_display_matrix, \
     apply_transform_to_points
 
 # For animations, from pycortex
@@ -315,7 +315,7 @@ class freeCoG:
         
         '''
 
-        from img_pipe_chang.img_pipe.surface_warping_scripts.make_outer_surf import make_outer_surf  # From ielu
+        from img_pipe.img_pipe.surface_warping_scripts.make_outer_surf import make_outer_surf  # From ielu
         # Create mask of pial surface
         hems = ['lh', 'rh']
         for hem in hems:
@@ -538,7 +538,7 @@ class freeCoG:
 
         '''
 
-        from img_pipe_chang.img_pipe.surface_warping_scripts.project_electrodes_anydirection import \
+        from img_pipe.img_pipe.surface_warping_scripts.project_electrodes_anydirection import \
             project_electrodes_anydirection
 
         print('Projection Params: \n\t Grid Name: %s.mat \n\t Use Mean Normal: %s \n\t \
