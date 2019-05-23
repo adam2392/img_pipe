@@ -2289,10 +2289,8 @@ class freeCoG:
 
         mlab.view(azimuth, elevation=90)
 
-        mlab.title('%s recon anatomy' % (self.subj), size=0.3)
-
-        #arr = mlab.screenshot(antialiased=True)
         if screenshot:
+            arr = mlab.screenshot(antialiased=True)
             plt.figure(figsize=(20, 20))
             arr, xoff, yoff = remove_whitespace(arr)
             plt.imshow(arr, aspect='equal')
